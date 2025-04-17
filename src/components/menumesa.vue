@@ -30,7 +30,7 @@ const navegarARuta = (name) => {
     position: relative;
     bottom: 20px;
     left: 20px; 
-    z-index: 2;
+    z-index: 20;
   }
   
   /* Estilos del botón flotante principal */
