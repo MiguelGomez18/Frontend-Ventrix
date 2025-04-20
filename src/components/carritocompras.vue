@@ -4,7 +4,7 @@
     <div v-if="obtenerProductos.length === 0" class="cart-empty">
       <p>No hay productos en el carrito</p>
     </div>
-    <div v-else>
+    <div v-if="obtenerProductos.length != 0" class="table-container">
       <table class="cart-table">
         <thead class="encabezado">
           <tr>
@@ -22,12 +22,14 @@
             <td data-label="Cantidad" :class="{ 'full-width': Rol === 'CAJERO' }">
               <button 
                 class="quantity-btn" 
+                :style="{ '--pad': `${padding}`, '--font': `${fontsize}px`, '--min': `${minwidth}` }"
                 @click="disminuirCantidad(producto)" 
                 :disabled="producto.disabled"
               >-</button>
               {{ producto.cantidad }}
               <button 
                 class="quantity-btn1" 
+                :style="{ '--pad': `${padding}`, '--font': `${fontsize}px`, '--min': `${minwidth}` }"
                 @click="aumentarCantidad(producto)" 
                 :disabled="producto.disabled"
               >+</button>
@@ -53,11 +55,11 @@
           </tr>
         </tbody>
       </table>
-      <p class="cart-total">Total: {{ mesaTotal || currency }}</p>
-      <div class="action-buttons">
-        <button v-if="pago" class="pay-btn" @click="openPaymentModal">Pagar</button>
-        <button v-if="comanda" class="pay-btn" @click="comandar" :disabled="isComandado">Comandar</button>
-      </div>
+    </div>
+    <p  v-if="obtenerProductos.length != 0" class="cart-total">Total: {{ mesaTotal || currency }}</p>
+    <div v-if="obtenerProductos.length != 0" class="action-buttons">
+      <button v-if="pago" class="pay-btn" @click="openPaymentModal">Pagar</button>
+      <button v-if="comanda" class="pay-btn" @click="comandar" :disabled="isComandado">Comandar</button>
     </div>
   </div>
 </template>
@@ -80,6 +82,9 @@ const props = defineProps({
 const getImagen = (path) => `${getBaseUrl()}${path}`
 const tamaño1 = ref(70);
 const tamañoImagen = ref(80);
+const padding = ref("6px 10px");
+const fontsize = ref("14");
+const minwidth = ref("30px");
 const isComandado = ref(false);
 const emit = defineEmits();
 const cartStore = useCart();
@@ -119,11 +124,21 @@ const obtenerProductosDesdeAPI = async () => {
 
 if (Rol === "MESERO") {
   comanda.value = true;
-} else if (Rol === "CAJERO") {
+} else if (Rol == "CAJERO" && cartStore.rapida == "RAPIDA")  {
   pago.value = true;
   tamaño1.value = 30;
   tamañoImagen.value = 80;
-} 
+  padding.value = "6px 10px";
+  fontsize.value = "14";
+  minwidth.value = "30px";
+} else if (Rol == "CAJERO") {
+  pago.value = true;
+  tamaño1.value = 30;
+  tamañoImagen.value = 80;
+  padding.value = "0px";
+  fontsize.value = "0";
+  minwidth.value = "0px";
+}
 
 const mesaTotal = computed(() => {
   return obtenerProductos.value
@@ -218,15 +233,13 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 100px;
-  padding: 20px;
+  margin: 10px;
   border-radius: 10px;
   background-color: #f9f9f9;
   border: 3px solid var(--color_principal);
-  box-sizing: border-box;
   position: relative;
   z-index: 10;
+  padding: 20px;
 }
 
 .full-width {
@@ -243,6 +256,7 @@ onMounted(async () => {
 .cart-title {
   text-align: center;
   font-size: 30px;
+  font-weight: 900;
   margin-bottom: 20px;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   color: var(--color_principal);
@@ -255,7 +269,14 @@ onMounted(async () => {
   padding: 20px;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Para un mejor scroll en iOS */
+}
+
 .cart-table {
+  font-size: 15px;
   width: 100%;
   margin-bottom: 20px;
   border-collapse: collapse;
@@ -269,10 +290,10 @@ onMounted(async () => {
 }
 
 .cart-table td {
-  padding: 10px;
   text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid #eee;
+  padding: 0;
 }
 
 .cart-table .tdinput textarea {
@@ -288,7 +309,7 @@ onMounted(async () => {
 }
 
 .quantity-btn, .quantity-btn1, .remove-btn {
-  padding: 8px 12px;
+  padding: 6px;
   border: none;
   cursor: pointer;
   border-radius: 5px;
@@ -299,7 +320,7 @@ onMounted(async () => {
 
 .quantity-btn, .quantity-btn1 {
   background-color: #d4d4d4;
-  min-width: 30px;
+  min-width: 25px;
 }
 
 .quantity-btn:hover {
@@ -359,7 +380,7 @@ onMounted(async () => {
 /* Media query para tablets (820px - 1024px) */
 @media (max-width: 1024px) {
   .cart-container {
-    padding: 15px;
+    
     margin-bottom: 80px;
   }
   
@@ -408,85 +429,132 @@ onMounted(async () => {
 }
 
 /* Media query para móviles (hasta 819px) */
+/* Media query para móviles (hasta 819px) */
 @media (max-width: 819px) {
   .cart-container {
-    padding: 10px;
-    margin-bottom: 100px;
-    width: 95%;
+    padding: 10px 0;
+    margin: 0 0 30px 0;
   }
-  
+
   .cart-title {
-    font-size: 22px;
-    margin-bottom: 15px;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 0px;
   }
-  
+
   .encabezado {
-    display: none;
+    display: none; /* Ocultamos encabezado para móvil */
   }
-  
+
+  .table-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cart-table {
+    width: 90%;
+    border-collapse: collapse;
+  }
+
   .cart-table tbody tr {
     display: grid;
     grid-template-columns: 1fr;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    gap: 5px;
+    margin-bottom: 25px;
     padding: 10px;
-    position: relative;
+    border: none;
+    background-color: #fafafa;
   }
-  
+
   .cart-table td {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
-    text-align: left;
-    padding: 8px;
+    justify-content: flex-start;
+    padding: 5px 0;
     border: none;
+    font-size: 14px;
   }
-  
+
   .cart-table td::before {
     content: attr(data-label);
-    font-weight: bold;
-    margin-right: 10px;
+    font-weight: 600;
     color: var(--color_principal);
-    flex: 1;
+    margin-right: 10px;
+    min-width: 100px;
+    flex-shrink: 0;
   }
-  
+
   .cart-table td > *:not(:first-child) {
-    flex: 2;
+    text-align: right;
   }
   
   .quantity-btn,
-  .quantity-btn1,
+  .quantity-btn1 {
+    padding: var(--pad);
+    font-size: var(--font);
+    min-width: var(--min);
+  }
+
   .remove-btn {
-    padding: 5px 8px;
-    font-size: 12px;
+    padding: 6px 12px;
+    font-size: 13px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
   }
-  
+
   .tdimg img {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    object-fit: cover;
   }
-  
-  .cart-table .tdinput textarea {
-    height: 60px;
-    font-size: 12px;
-    text-align: left;
+
+  .tdinput {
+    width: 95%;
   }
-  
+
+  .tdinput textarea {
+    font-size: 13px;
+    min-height: auto;
+    padding: 8px;
+    resize: vertical;
+  }
+
   .cart-total {
     font-size: 20px;
     text-align: center;
-    margin: 15px 0;
+    font-weight: bold;
+    margin-top: 10px;
   }
-  
+
   .action-buttons {
+    display: flex;
+    align-items: center;
     flex-direction: column;
-    gap: 10px;
-  }
-  
-  .pay-btn {
+    gap: 12px;
+    margin-top: 0px;
     width: 100%;
-    padding: 10px;
   }
+
+  .pay-btn {
+    width: 90%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: var(--color_principal, #4caf50);
+    color: white;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .full-width {
+    width: 100% !important;
+  }
+
+  
 }
+
+
 </style>

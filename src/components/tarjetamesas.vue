@@ -112,30 +112,43 @@ onMounted(() => {
 
 <style scoped>
 .mesas-container {
-  width: 70%;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
-  justify-content: start;
+  width: auto;
 }
 
 .mesas {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 25px;
   background-color: #f0f0f0;
   border: 5px solid var(--color_principal);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  margin: 10px 20px;
+  margin: 10px 10px;
 }
 
 .mesas img {
   width: 100px;
   height: 100px;
+}
+
+@media (max-width: 819px) {
+  .mesas {
+    padding: 12px;
+    margin: 8px 8px;
+  }
+
+  .mesas img {
+    width: 70px;
+    height: 70px;
+  }
 }
 </style>
