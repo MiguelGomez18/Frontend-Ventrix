@@ -25,7 +25,7 @@ app
   .mount('#app');
 
 // Bloquear clic derecho
-/*document.addEventListener('contextmenu', function (e) {
+document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
 });
 
@@ -47,5 +47,5 @@ document.addEventListener('keydown', function (e) {
   if (e.ctrlKey && e.key === 's') {
     e.preventDefault();
   }
-});*/
+});
 
