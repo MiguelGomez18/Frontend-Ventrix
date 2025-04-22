@@ -118,7 +118,7 @@ const empleadosFiltrados = computed(() => {
   );
 });
 
-const eliminarEmpleado = async (indice) => {
+const eliminarEmpleado = async (indicePagina) => {
   const result = await Swal.fire({
     title: '¿Estás seguro?',
     text: "Esta acción no se puede deshacer",
@@ -132,11 +132,8 @@ const eliminarEmpleado = async (indice) => {
   
   if (result.isConfirmed) {
     try {
-        console.log(indice);
-        
-      const empleadoAEliminar = empleados.value[indice];
-      console.log(empleadoAEliminar);
-      
+      const indiceReal = (paginaActual.value - 1) * filasPorPagina + indicePagina;
+      const empleadoAEliminar = empleados.value[indiceReal];
       await axios.delete(`/usuario/${empleadoAEliminar.documento}`);
       await buscar();
 
