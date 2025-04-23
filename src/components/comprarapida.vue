@@ -32,7 +32,8 @@ const mesa = ref({
   estado: 'RAPIDA',
   sucursal: {
     id: nit.value
-  }
+  },
+  activo: 'ACTIVO' 
 });
 const date = new Date();
 const dia = (date.getDate() < 10 ? '0':'') + date.getDate();
