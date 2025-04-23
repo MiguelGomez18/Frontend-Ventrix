@@ -20,6 +20,7 @@ import axios from '@/axios';
 import { useRouter, useRoute } from 'vue-router';
 import { useCart } from '@/stores/cart';
 
+
 const cart = useCart();
 const route = useRoute();
 const router = useRouter();
